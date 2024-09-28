@@ -1,7 +1,3 @@
-/Include
-/Lib
-/Scripts
+/mystaticfiles
 
-pyvenv.cfg
-
-
+db.sqlite3
