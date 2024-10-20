@@ -4,5 +4,6 @@ from . import views
 app_name="components"
 
 urlpatterns = [
-    path('',views.component,name='components'),
+    path('list/',views.component,name='list'),
+    path('usage/',views.usage,name="usage"),
 ]

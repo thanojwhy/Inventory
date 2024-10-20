@@ -8,3 +8,10 @@ def component(request):
         "name":""
     }
     return HttpResponse(template.render(context,request))
+
+def usage(request):
+    template=loader.get_template('usage.html')
+    context={
+        "name":""
+    }
+    return HttpResponse(template.render(context,request))
