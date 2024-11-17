@@ -8,5 +8,28 @@
 
 {% block content %}
     <h1>Components list</h1>
+    <table>
+        <th>
+            <td>Name</td>
+            <td>Category</td>
+            <td>Description</td>
+            <td>Unit of Measure</td>
+            <td>Cost per Unit</td>
+            <td>Current Stock</td>
+            <td>Industry</td>
+        </th>
+        <tr>
+            {% for c in components %}
+                <td>{{ c.name }}</td>
+                <td>{{ c.category }}</td>
+                <td>{{ c.description }}</td>
+                <td>{{ c.unitMeasure }}</td>
+                <td>{{ c.costPerUnit }}</td>
+                <td>{{ c.currentStock }}</td>
+                <td>{{ c.industryLine }}</td>
+            {% endfor %}
+        </tr> 
+
+    </table>
 {% endblock %}
     
