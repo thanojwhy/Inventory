@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'Components',
+    'Suppliers',
 ]
 
 MIDDLEWARE = [
@@ -125,9 +126,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 STATIC_URL = 'static/'
 
-STATICFILES_DIRS=[
-    os.path.join(BASE_DIR,'mystaticfiles')
-]
+# STATICFILES_DIRS=[
+#     os.path.join(BASE_DIR,'mystaticfiles')
+# ]
 LOGIN_REDIRECT_URL="/"
 
 # Default primary key field type

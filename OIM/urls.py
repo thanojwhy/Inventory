@@ -24,4 +24,5 @@ urlpatterns = [
     path('',views.home,name="homePage"),
     path('accounts/',include('allauth.urls')),
     path('',include('Components.urls',namespace="components")),
+    path('',include('Suppliers.urls',namespace="suppliers")),
 ]
