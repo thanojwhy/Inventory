@@ -10,32 +10,43 @@
     <div class="pb-8 flex justify-center">
         <h1 class="text-3xl text-black">Component List</h1>
     </div>
-    <table class="shadow-lg bg-white">
-        <thead>
-            <tr class="text-left border-collapse">
-                <th class="bg-sky-100 border px-8 py-4">Name</th>
-                <th class="bg-sky-100 border px-8 py-4">Category</th>
-                <th class="bg-sky-100 border px-8 py-4">Description</th>
-                <th class="bg-sky-100 border px-8 py-4">Unit of Measure</th>
-                <th class="bg-sky-100 border px-8 py-4">Cost per Unit</th>
-                <th class="bg-sky-100 border px-8 py-4">Current Stock</th>
-                <th class="bg-sky-100 border px-8 py-4">Industry</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for c in components %}
-                <tr class="hover:bg-gray-100">
-                    <td class=" border px-4 py-4">{{ c.name }}</td>
-                    <td class=" border px-4 py-4">{{ c.category }}</td>
-                    <td class=" border px-4 py-4">{{ c.description }}</td>
-                    <td class=" border px-4 py-4">{{ c.unitMeasure }}</td>
-                    <td class=" border px-4 py-4">{{ c.costPerUnit }}</td>
-                    <td class=" border px-4 py-4"> <input type="number" value={{ c.currentStock }}> </td>
-                    <td class=" border px-4 py-4">{{ c.industryLine }}</td>
+    <div class="overflow-x-auto">
+        <table class="shadow-lg bg-white">
+            <thead>
+                <tr class="text-left border-collapse">
+                    <th class="bg-sky-100 border px-8 py-4">Id</th>
+                    <th class="bg-sky-100 border px-8 py-4">Name</th>
+                    <th class="bg-sky-100 border px-8 py-4">Category</th>
+                    <th class="bg-sky-100 border px-8 py-4">Unit of Measure</th>
+                    <th class="bg-sky-100 border px-8 py-4">Cost per Unit</th>
+                    <th class="bg-sky-100 border px-8 py-4">Current Stock</th>
+                    <th class="bg-sky-100 border px-8 py-4">Industry</th>
+                    <th class="bg-sky-100 border px-8 py-4">Usage Update</th>
                 </tr>
-            {% endfor %}      
-        </tbody>
-
-    </table>
+            </thead>
+            <tbody>
+                {% for c in components %}
+                    <tr class="hover:bg-gray-100">
+                        <td class=" border px-4 py-4">{{ c.id }}</td>
+                        <td class=" border px-4 py-4">{{ c.name }}</td>
+                        <td class=" border px-4 py-4">{{ c.category }}</td>
+                        <td class=" border px-4 py-4">{{ c.unitMeasure }}</td>
+                        <td class=" border px-4 py-4">{{ c.costPerUnit }}</td>
+                        <td class=" border px-4 py-4">{{ c.currentStock }} </td>
+                        <td class=" border px-4 py-4">{{ c.industryLine }}</td>
+                        <td class=" border px-4 py-4">
+                            <form action="{% url 'components:update' c.id %}" method="POST">
+                                {% csrf_token %}
+                                <div class="flex">
+                                    <input class="border px-1" type="text" size="4" name="usage_update">
+                                    <button type="submit" class="p-2 mx-2 hover:bg-sky-100 border bx bx-pencil" />
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}      
+            </tbody>
+        </table>
+    </div>
 {% endblock %}
     
