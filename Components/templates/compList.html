@@ -27,13 +27,13 @@
             <tbody>
                 {% for c in components %}
                     <tr class="hover:bg-gray-100">
-                        <td class=" border px-4 py-4">{{ c.id }}</td>
-                        <td class=" border px-4 py-4">{{ c.name }}</td>
-                        <td class=" border px-4 py-4">{{ c.category }}</td>
-                        <td class=" border px-4 py-4">{{ c.unitMeasure }}</td>
-                        <td class=" border px-4 py-4">{{ c.costPerUnit }}</td>
-                        <td class=" border px-4 py-4">{{ c.currentStock }} </td>
-                        <td class=" border px-4 py-4">{{ c.industryLine }}</td>
+                        <td class=" border px-8 py-4">{{ c.id }}</td>
+                        <td class=" border px-8 py-4">{{ c.name }}</td>
+                        <td class=" border px-8 py-4">{{ c.category }}</td>
+                        <td class=" border px-8 py-4">{{ c.unitMeasure }}</td>
+                        <td class=" border px-8 py-4">{{ c.costPerUnit }}</td>
+                        <td class=" border px-8 py-4">{{ c.currentStock }} </td>
+                        <td class=" border px-8 py-4">{{ c.industryLine }}</td>
                         <td class=" border px-4 py-4">
                             <form action="{% url 'components:update' c.id %}" method="POST">
                                 {% csrf_token %}

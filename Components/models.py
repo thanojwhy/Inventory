@@ -15,3 +15,11 @@ class Component(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
+class Usage(models.Model):
+    component=models.ForeignKey(Component,on_delete=models.CASCADE,related_name="usages")
+    quantityUsed=models.PositiveIntegerField()
+    dateAndTime=models.DateTimeField()
+
+    def __str__(self):
+        return f"{self.component.name} on {self.dateAndTime}"

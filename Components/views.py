@@ -1,7 +1,9 @@
 from django.http import HttpResponse
+from django.core.paginator import Paginator
 from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
-from .models import Component
+from django.utils.timezone import now
+from .models import Component, Usage
 # Create your views here.
 
 def component(request):
@@ -20,24 +22,36 @@ def update_usage(request,c_id):
 
             if usage_update>c.currentStock:
                 return render(request,'compList.html',{
-                    'c':Component.objects.all(),
+                    'components':Component.objects.all(),
                     'error':f"Insufficient stock for {c.name}",
                 })
             c.currentStock-=usage_update
             c.save()
 
+            Usage.objects.create(
+                component=c,
+                quantityUsed=usage_update,
+                dateAndTime=now()
+            )
+
             return redirect('components:list')
         except (ValueError,KeyError):
             return render(request,'compList.html',{
-                'c':Component.objects.all(),
+                'components':Component.objects.all(),
                 'error':"Invalid input",
             })
     else:
         return redirect('components:list')
 
 def usage(request):
+    usage_log=Usage.objects.select_related("component").order_by("-dateAndTime")
+    paginator=Paginator(usage_log,10)
+
+    page_no=request.GET.get('page')
+    page_obj=paginator.get_page(page_no)
+    
     template=loader.get_template('usage.html')
     context={
-        "name":""
+        "usage":page_obj
     }
     return HttpResponse(template.render(context,request))

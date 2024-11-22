@@ -2,11 +2,66 @@
 
 
 {% block title %}
-    Usage
+    Component Usage
 {% endblock title %}
 
 
 {% block content %}
-    <h1>Usage Statistics</h1>
+    <div class="pb-8 flex justify-center">
+        <h1 class="text-3xl text-black">Usage Log</h1>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="shadow-lg bg-white">
+            <thead>
+                <tr class="text-left border-collapse">
+                    <th class="bg-sky-100 border px-8 py-4">Id</th>
+                    <th class="bg-sky-100 border px-8 py-4">Name</th>
+                    <th class="bg-sky-100 border px-8 py-4">Unit Measure</th>
+                    <th class="bg-sky-100 border px-8 py-4">Cost per Unit</th>
+                    <th class="bg-sky-100 border px-8 py-4">Industry</th>
+                    <th class="bg-sky-100 border px-8 py-4">Quantity Used</th>
+                    <th class="bg-sky-100 border px-8 py-4">Time and Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in usage %}
+                    <tr class="hover:bg-gray-100">
+                        <td class=" border px-8 py-4">{{ u.component.id }}</td>
+                        <td class=" border px-8 py-4">{{ u.component.name }}</td>
+                        <td class=" border px-8 py-4">{{ u.component.unitMeasure }}</td>
+                        <td class=" border px-8 py-4">{{ u.component.costPerUnit }}</td>
+                        <td class=" border px-8 py-4">{{ u.component.industryLine }}</td>
+                        <td class=" border px-8 py-4">{{ u.quantityUsed }}</td>
+                        <td class=" border px-8 py-4">{{ u.dateAndTime }}</td>
+                    </tr>
+                {% endfor %}      
+            </tbody>
+        </table>
+        <div class="flex justify-center mt-4">
+            <nav>
+                <ul class="pagination flex items-center">
+                    {% if usage.has_previous %}
+                        <li class="mx-2">
+                            <a href="?page=1" class="text-blue-500 hover:underline">1</a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="?page={{ usage.previous_page_number }}" class="text-blue-500 hover:underline">&lt</a>
+                        </li>
+                    {% endif %}
+                    <li class="mx-2">
+                        Page {{ usage.number }} of {{ usage.paginator.num_pages }}
+                    </li>
+                    {% if usage.has_next %}
+                        <li class="mx-2">
+                            <a href="?page={{ usage.next_page_number }}" class="text-blue-500 hover:underline">&gt</a>
+                        </li>
+                        <li class="mx-2">
+                            <a href="?page={{ usage.paginator.num_pages }}" class="text-blue-500 hover:underline">{{usage.paginator.num_pages}}</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
 {% endblock %}
     
