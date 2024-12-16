@@ -1,10 +1,19 @@
 from django.http import HttpResponse
+from django.db import models
 from django.core.paginator import Paginator
 from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
 from django.utils.timezone import now
 from .models import Component, Usage
 # Create your views here.
+
+def home(request):
+    template = loader.get_template('home.html')
+    low=Component.objects.filter(currentStock__lt=models.F('safeStock'))
+    context={
+        "low":low,
+    }
+    return HttpResponse(template.render(context,request))
 
 def component(request):
     complist=Component.objects.all().values()
