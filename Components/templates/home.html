@@ -40,21 +40,19 @@
         </div>
       
         <div class="col-span-10 md:col-span-7 bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">Future Usage Prediction</h2>
-          <div class="text-sm text-gray-700">
-            <p>Predicted usage based on past trends.</p>
-            <ul class="mt-2 list-disc list-inside">
-              <li><strong>Gearbox</strong>: Expected usage in next month - 50 units</li>
-              <li><strong>t</strong>: Expected usage in next month - 30 units</li>
-            </ul>
-          </div>
-          <div class="mt-6">
-            <div class="h-48 bg-gray-100 flex items-center justify-center rounded">
-              <p class="text-gray-400">[Future Usage Chart Placeholder]</p>
-            </div>
-          </div>
+          <h2 class="text-lg font-bold text-gray-900 mb-4">Usage Prediction</h2>
+          <h3 class="text-md font-semibold text-gray-800">Component: {{c.name}}</h3>
+          <p class="text-gray-600 mb-4">Prediction Accuracy (RMSE): <strong>{{ rmse|floatformat:2 }}</strong></p>
+            
+          <img src="data:image/png;base64,{{ image }}" alt="Usage Prediction Graph" class="w-full h-auto rounded-lg shadow" />
+            
+          <h3 class="text-md font-semibold text-gray-800 mt-4">Predicted Usage for Next 30 Days</h3>
+          <ul class="list-disc pl-6">
+            {% for date, prediction in predictions %}
+              <li>{{ date|date:"Y-m-d" }}: {{ prediction|floatformat:2 }} units</li>
+            {% endfor %}
+          </ul>
         </div>
-      </div>
       
 {% endblock %}
     
