@@ -4,95 +4,32 @@ from django.core.paginator import Paginator
 from django.shortcuts import render,get_object_or_404,redirect
 from django.template import loader
 from django.utils.timezone import now
-from .models import Component, Usage
+# Create your views here.
 
+import dash
+from django_plotly_dash import DjangoDash
+from dash import dcc, html
+from dash.dependencies import Input, Output
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 import seaborn as sns
 from io import BytesIO
 import base64
-# Create your views here.
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+from .models import Component, Usage
+import plotly.express as px
+
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 def home(request):
     template = loader.get_template('home.html')
-
-    # Low stock notifications
     low_stock = Component.objects.filter(currentStock__lt=models.F('safeStock'))
-
-    # Prediction logic for a selected component
-    component_id = request.GET.get('component_id', 2)  # Default to component with id=2
-    c = Component.objects.get(id=component_id)
-    usage = Usage.objects.filter(component=c).order_by('dateAndTime')
-
-    daily_usage = usage.extra({'date': "date(dateAndTime)"}).values('date').annotate(
-        total=models.Sum('quantityUsed')).order_by('date')
-
-    # Prepare data for ML prediction
-    df = pd.DataFrame(daily_usage)
-    if not df.empty:
-        df['date'] = pd.to_datetime(df['date'])
-        df['days'] = (df['date'] - df['date'].min()).dt.days
-
-        x = df[['days']]
-        y = df[['total']]
-
-        # Train model
-        from sklearn.model_selection import train_test_split
-        from sklearn.linear_model import LinearRegression
-        from sklearn.metrics import mean_squared_error
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        import numpy as np
-        from io import BytesIO
-        import base64
-
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=42)
-        model = LinearRegression()
-        model.fit(x_train, y_train)
-
-        # Predict future usage
-        future_days = max(x['days']) + 30
-        future_dates = pd.date_range(start=df['date'].max(), periods=31)[1:]
-        predictions = model.predict(np.array(range(max(x['days']) + 1, future_days + 1)).reshape(-1, 1))
-
-        # Plot graph
-        sns.set(style='whitegrid')
-        plt.figure(figsize=(10, 5))
-        sns.lineplot(x=df['date'], y=df['total'], marker='o', label='Actual Usage')
-        plt.plot(future_dates, predictions, 'r--', label="Predicted Usage")
-        plt.title("Usage Prediction")
-        plt.xlabel("Date")
-        plt.ylabel("Quantity Used")
-        plt.legend()
-
-        # Encode graph to base64
-        buffer = BytesIO()
-        plt.savefig(buffer, format="png")
-        buffer.seek(0)
-        image_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        buffer.close()
-
-        rmse = np.sqrt(mean_squared_error(y_test, model.predict(x_test)))
-    else:
-        image_base64 = None
-        predictions = None
-        rmse = None
-
-    # Combined context
     context = {
         "low": low_stock,
-        "component": c,
-        "image": image_base64,
-        "predictions": list(zip(future_dates, predictions)) if predictions.any() else [],
-        "rmse": rmse,
     }
-
     return HttpResponse(template.render(context, request))
-
 
 def component(request):
     complist=Component.objects.all().values()
@@ -143,3 +80,77 @@ def usage(request):
         "usage":page_obj
     }
     return HttpResponse(template.render(context,request))
+
+
+app = DjangoDash('dashboard')
+
+app.layout = html.Div([
+    dcc.Dropdown(
+        id='component-dropdown',
+        options=[
+            {'label': c.name, 'value': c.id} for c in Component.objects.filter(currentStock__lt=models.F('safeStock'))
+        ],
+        value=1,
+        style={'width': '50%'}
+    ),
+    html.Div(id='accuracy', style={'marginTop': '10px', 'fontsize': '18px'}),
+    html.Img(id='regplot', style={'width': '100%', 'height': 'auto'}),
+    dcc.Graph(id='usage-graph'),
+])
+
+@app.callback(
+        [Output('usage-graph', 'figure'),
+        Output('accuracy', 'children'),
+        Output('regplot', 'src')],
+        [Input('component-dropdown', 'value')]
+    )
+def update_graph(cid):
+    component = Component.objects.get(id=cid)
+    usage = Usage.objects.filter(component=component).values('dateAndTime', 'quantityUsed').order_by('dateAndTime')
+    df = pd.DataFrame(list(usage))
+    if df.empty:
+        return {}, 'No data available', None
+
+    # Convert 'dateAndTime' to datetime format
+    df['dateAndTime'] = pd.to_datetime(df['dateAndTime'])
+    
+    # Create 'days' column for grouping
+    df['days'] = (df['dateAndTime'] - df['dateAndTime'].min()).dt.days
+    
+    # Group by the 'days' column and sum the 'quantityUsed' only
+    df = df.groupby('days')['quantityUsed'].sum().reset_index()
+    df.columns = ['Days', 'Total']
+
+    # Prepare data for model fitting
+    x = df[['Days']]
+    y = df[['Total']]
+
+    model = LinearRegression()
+    model.fit(x, y)
+    predictions = model.predict(x)
+    rmse = np.sqrt(mean_squared_error(y, predictions))
+
+    # Future prediction
+    future_days = np.arange(x['Days'].max() + 1, x['Days'].max() + 31).reshape(-1, 1)
+    future_predictions = model.predict(future_days)
+
+    # Generate the regression plot
+    plt.figure(figsize=(10, 6))
+    sns.regplot(x='Days', y='Total', data=df, ci=None, scatter_kws={'s': 50}, line_kws={'color': 'red'})
+    plt.title(f'Usage Prediction for {component.name}')
+    plt.xlabel('Days')
+    plt.ylabel('Total Usage')
+    plt.tight_layout()
+
+    # Save the regression plot as an image
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    regplot_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    buffer.close()
+
+    # Create a Plotly figure
+    fig = px.line(df, x='Days', y='Total', title=f'Usage for {component.name}')
+    fig.add_scatter(x=future_days.flatten(), y=future_predictions.flatten(), mode='lines', name='Future Prediction')
+
+    return fig, f"Prediction Accuracy (RMSE) - {rmse:2f}", f'data:image/png;base64,{regplot_base64}'
