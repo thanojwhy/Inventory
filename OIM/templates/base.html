@@ -13,54 +13,54 @@
         </style>
     </head>
     <body>
-        <div class="min-h-screen flex flex-row bg-gray-100">
+        <div class="h-screen flex flex-row bg-gray-100">
             <div class="flex flex-col w-56 bg-sky-100 overflow-hidden">
                 <div class="flex items-center justify-center h-20 shadow-md">
-                <h1 class="text-3xl uppercase text-black">OIM</h1>
+                    <h1 class="text-3xl uppercase text-black">OIM</h1>
                 </div>
                 <ul class="flex flex-col py-4">
-                <li>
-                    <a href="/" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                    <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bxs-dashboard"></i></span>
-                    <span class="text-sm font-medium">Dashboard</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{%url 'components:usage'%}"" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                    <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-line-chart"></i></span>
-                    <span class="text-sm font-medium">Usage</span>
-                    </a>
-                </li>
-                {% if request.user.is_authenticated %}
                     <li>
-                        <a href="{%url 'components:list'%}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-cog"></i></span>
-                        <span class="text-sm font-medium">Components</span>
+                        <a href="/" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bxs-dashboard"></i></span>
+                        <span class="text-sm font-medium">Dashboard</span>
                         </a>
                     </li>
                     <li>
-                        <a href="{%url 'suppliers:details'%}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800 js-toggle-modal">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-user"></i></span>
-                        <span class="text-sm font-medium">Suppliers</span>
+                        <a href="{%url 'components:usage'%}"" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-line-chart"></i></span>
+                        <span class="text-sm font-medium">Usage</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'account_logout' %}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-out"></i></span>
-                        <span class="text-sm font-medium">Logout</span>
-                        </a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a href="{% url 'account_login' %}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-in"></i></span>
-                        <span class="text-sm font-medium">Login</span>
-                        </a>
-                    </li>
-                {% endif %}
+                    {% if request.user.is_authenticated %}
+                        <li>
+                            <a href="{%url 'components:list'%}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                            <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-cog"></i></span>
+                            <span class="text-sm font-medium">Components</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{%url 'suppliers:details'%}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800 js-toggle-modal">
+                            <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-user"></i></span>
+                            <span class="text-sm font-medium">Suppliers</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'account_logout' %}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                            <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-out"></i></span>
+                            <span class="text-sm font-medium">Logout</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{% url 'account_login' %}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                            <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-in"></i></span>
+                            <span class="text-sm font-medium">Login</span>
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
             </div>
-            <div class="p-16">
+            <div class="px-4 pt-4">
                 {% block body %}
                     {% block content %}{%endblock%}
                 {% endblock %}

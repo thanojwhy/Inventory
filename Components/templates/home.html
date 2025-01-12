@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% load plotly_dash %}
-{% load static %}
 
 {% block title %} Home {% endblock title %}
 
 {% block content %}
-<div class="grid grid-cols-10 gap-6 p-4 bg-gray-50 min-h-screen">
-    <div class="col-span-10 md:col-span-3 bg-sky-100 p-4 rounded-lg shadow-md">
+<div class="grid grid-cols-10 gap-6 p-4 bg-gray-50 min-h-screen" >
+    <div class="col-span-3 bg-sky-100 p-4 rounded-lg shadow-md">
         <h2 class="text-lg font-bold text-gray-900 mb-4">Low Stock Notifications</h2>
         <ul role="list" class="divide-y divide-gray-200">
             {% if low %}
@@ -26,10 +25,9 @@
         </ul>
     </div>
 
-    <div class="col-span-10 md:col-span-7 bg-white p-4 rounded-lg shadow-md">
+    <div class="col-span-7 bg-white p-4 rounded-lg shadow-md">
         <h2 class="text-lg font-bold text-gray-900 mb-4">Usage Prediction</h2>
-        {% plotly_app name="dashboard" %}
+        {% plotly_app name="dashboard" ratio=1 %}
     </div>
 </div>
-<script src="{% static 'js/plotly.min.js' %}"></script>
 {% endblock %}

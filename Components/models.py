@@ -7,7 +7,7 @@ class Component(models.Model):
     description=models.TextField()
     unitMeasure=models.CharField(max_length=8)
     costPerUnit=models.IntegerField()
-    currentStock=models.PositiveIntegerField()
+    currentStock=models.IntegerField()
     maximumStock=models.PositiveIntegerField()
     safeStock=models.PositiveIntegerField()
     industryLine=models.CharField(max_length=15)

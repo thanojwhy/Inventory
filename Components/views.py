@@ -70,7 +70,7 @@ def update_usage(request,c_id):
 
 def usage(request):
     usage_log=Usage.objects.select_related("component").order_by("-dateAndTime")
-    paginator=Paginator(usage_log,10)
+    paginator=Paginator(usage_log,7)
 
     page_no=request.GET.get('page')
     page_obj=paginator.get_page(page_no)
@@ -82,21 +82,21 @@ def usage(request):
     return HttpResponse(template.render(context,request))
 
 
-app = DjangoDash('dashboard')
+app = DjangoDash('dashboard',serve_locally=False)
 
 app.layout = html.Div([
     dcc.Dropdown(
         id='component-dropdown',
         options=[
             {'label': c.name, 'value': c.id} for c in Component.objects.filter(currentStock__lt=models.F('safeStock'))
-        ],
-        value=1,
+        ] or [{'label': 'No components available', 'value': ''}],
         style={'width': '50%'}
     ),
-    html.Div(id='accuracy', style={'marginTop': '10px', 'fontsize': '18px'}),
-    html.Img(id='regplot', style={'width': '100%', 'height': 'auto'}),
+    html.Div(id='accuracy', style={'marginTop': '10px', 'fontSize': '18px',}),
+    html.Img(id='regplot', style={'width': '100%', 'height': 'auto',}),
     dcc.Graph(id='usage-graph'),
 ])
+
 
 @app.callback(
         [Output('usage-graph', 'figure'),
@@ -105,6 +105,9 @@ app.layout = html.Div([
         [Input('component-dropdown', 'value')]
     )
 def update_graph(cid):
+    if not cid:
+        return {}, 'No component selected', None
+    
     component = Component.objects.get(id=cid)
     usage = Usage.objects.filter(component=component).values('dateAndTime', 'quantityUsed').order_by('dateAndTime')
     df = pd.DataFrame(list(usage))
@@ -120,6 +123,9 @@ def update_graph(cid):
     # Group by the 'days' column and sum the 'quantityUsed' only
     df = df.groupby('days')['quantityUsed'].sum().reset_index()
     df.columns = ['Days', 'Total']
+
+    if df['Days'].isnull().any() or df['Total'].isnull().any():
+        return {}, 'Invalid data for model training', None
 
     # Prepare data for model fitting
     x = df[['Days']]
