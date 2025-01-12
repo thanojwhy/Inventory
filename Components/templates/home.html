@@ -1,58 +1,33 @@
 {% extends 'base.html' %}
-
+{% load plotly_dash %}
 
 {% block title %} Home {% endblock title %}
 
 {% block content %}
-    {%if not request.user.is_authenticated%}
-        <a href="accounts/" class="text-3xl text-white bg-black rounded px-2">Login</a>
-    {%endif%}
-    <div class="pb-8 flex justify-center">
-        <h1 class="text-3xl text-black">Dashboard</h1>
-    </div>
-    <div class="grid grid-cols-10 gap-6 p-4 bg-gray-50 min-h-screen">
-        <div class="col-span-10 md:col-span-3 bg-sky-100 p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">Low Stock Notifications</h2>
-          <ul role="list" class="divide-y divide-gray-200">
+<div class="grid grid-cols-10 gap-6 p-4 bg-gray-50 min-h-screen" >
+    <div class="col-span-3 bg-sky-100 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Low Stock Notifications</h2>
+        <ul role="list" class="divide-y divide-gray-200">
             {% if low %}
-              {% for c in low %}
+                {% for c in low %}
                 <li class="flex justify-between gap-x-6 py-5">
-                  <div class="flex min-w-0 gap-x-4">
-                    <div class="min-w-0 flex-auto">
-                      <p class="text-sm font-semibold text-gray-900">{{ c.name }}</p>
-                      <p class="mt-1 truncate text-xs text-gray-500">
-                        Current Stock: {{ c.currentStock }}
-                      </p>
+                    <div>
+                        <p class="text-sm font-semibold">{{ c.name }}</p>
+                        <p class="text-xs">Current Stock: {{ c.currentStock }}</p>
+                        <p class="text-xs">Safety Stock: {{ c.safeStock }}</p>
                     </div>
-                  </div>
-                  <div class="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
-                    <p class="text-sm text-gray-900">Safety Stock: {{ c.safeStock }}</p>
-                    <p class="mt-1 text-xs text-red-500">Needs replenishment!</p>
-                  </div>
+                    <p class="text-xs text-red-500">Needs replenishment!</p>
                 </li>
-              {% endfor %}
+                {% endfor %}
             {% else %}
-              <li class="py-5">
-                <p class="text-sm text-gray-900">All components are sufficiently stocked.</p>
-              </li>
+                <li class="py-5">All components are sufficiently stocked.</li>
             {% endif %}
-          </ul>
-        </div>
-      
-        <div class="col-span-10 md:col-span-7 bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold text-gray-900 mb-4">Usage Prediction</h2>
-          <h3 class="text-md font-semibold text-gray-800">Component: {{c.name}}</h3>
-          <p class="text-gray-600 mb-4">Prediction Accuracy (RMSE): <strong>{{ rmse|floatformat:2 }}</strong></p>
-            
-          <img src="data:image/png;base64,{{ image }}" alt="Usage Prediction Graph" class="w-full h-auto rounded-lg shadow" />
-            
-          <h3 class="text-md font-semibold text-gray-800 mt-4">Predicted Usage for Next 30 Days</h3>
-          <ul class="list-disc pl-6">
-            {% for date, prediction in predictions %}
-              <li>{{ date|date:"Y-m-d" }}: {{ prediction|floatformat:2 }} units</li>
-            {% endfor %}
-          </ul>
-        </div>
-      
+        </ul>
+    </div>
+
+    <div class="col-span-7 bg-white p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-bold text-gray-900 mb-4">Usage Prediction</h2>
+        {% plotly_app name="dashboard" ratio=1 %}
+    </div>
+</div>
 {% endblock %}
-    

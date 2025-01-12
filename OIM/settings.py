@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'Components',
     'Suppliers',
+    'django_plotly_dash.apps.DjangoPlotlyDashConfig',
 ]
 
 MIDDLEWARE = [
@@ -53,9 +54,19 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'django_plotly_dash.middleware.BaseMiddleware',
 ]
 
+PLOTLY_COMPONENTS = [
+    'dash_core_components',
+    'dash_html_components',
+    'dash_renderer',
+    'dpd_static_support',
+]
+
+
 ROOT_URLCONF = 'OIM.urls'
+X_FRAME_OPTIONS = 'ALLOWALL'
 
 TEMPLATES = [
     {
@@ -107,6 +118,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CONTENT_SECURITY_POLICY = {
+    'default-src': "'self'",
+    'frame-ancestors': "'self' http://127.0.0.1:8000"
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -123,12 +138,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
-# STATICFILES_DIRS=[
-#     os.path.join(BASE_DIR,'mystaticfiles')
-# ]
 LOGIN_REDIRECT_URL="/"
 
 # Default primary key field type
