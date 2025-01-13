@@ -87,9 +87,6 @@ app = DjangoDash('dashboard',serve_locally=False)
 app.layout = html.Div([
     dcc.Dropdown(
         id='component-dropdown',
-        options=[
-            {'label': c.name, 'value': c.id} for c in Component.objects.filter(currentStock__lt=models.F('safeStock'))
-        ] or [{'label': 'No components available', 'value': ''}],
         style={'width': '50%'}
     ),
     html.Div(id='accuracy', style={'marginTop': '10px', 'fontSize': '18px',}),
@@ -97,6 +94,15 @@ app.layout = html.Div([
     dcc.Graph(id='usage-graph'),
 ])
 
+@app.callback(
+    Output('component-dropdown', 'options'),
+    Input('component-dropdown', 'value') 
+)
+def update_dropdown_options(value):
+    options = [
+        {'label': c.name, 'value': c.id} for c in Component.objects.filter(currentStock__lt=models.F('safeStock'))
+    ] or [{'label': 'No components available', 'value': ''}]
+    return options
 
 @app.callback(
         [Output('usage-graph', 'figure'),
